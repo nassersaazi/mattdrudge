@@ -1,0 +1,38 @@
+{% load static wagtailcore_tags wagtailuserbar %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>
+        {% block title %}{% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}{% endblock %}
+        {% block title_suffix %}{% wagtail_site as site %}{% if site and site.site_name and site.site_name != page.title %} — {{ site.site_name }}{% endif %}{% endblock %}
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/drudge.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    {% wagtailuserbar %}
+
+    {% wagtail_site as site %}
+    <header class="masthead">
+        <div class="masthead-top">
+            <span class="date">{% now "l, F j, Y" %}</span>
+            <span class="clock" id="clock">--:--:--</span>
+        </div>
+        <a href="/" class="masthead-title">{{ site.site_name }}</a>
+        <div class="masthead-rule"></div>
+    </header>
+
+    <main class="page">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>{{ site.site_name }} — aggregated headlines &middot; <a href="/admin/">Admin</a></p>
+    </footer>
+
+    <script src="{% static 'js/clock.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

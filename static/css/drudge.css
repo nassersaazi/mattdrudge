@@ -1,0 +1,127 @@
+/* Drudge-style news aggregator — white, black, dense, three columns. */
+:root {
+    --bg: #ffffff;
+    --ink: #000000;
+    --muted: #555555;
+    --red: #c00000;
+    --green: #007000;
+    --line: #000000;
+    --mono: "Courier New", Courier, monospace;
+    --sans: Arial, Helvetica, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+a { color: var(--ink); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Masthead ─────────────────────────────────────────────── */
+.masthead {
+    text-align: center;
+    padding: 1rem 1rem 0;
+    border-bottom: 3px double var(--line);
+}
+.masthead-top {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    max-width: 1000px;
+    margin: 0 auto .8rem;
+}
+.masthead-title {
+    display: inline-block;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 46px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: var(--ink);
+}
+.masthead-title:hover { text-decoration: none; }
+.masthead-rule {
+    height: 4px;
+    background: var(--ink);
+    margin-top: .6rem;
+}
+
+/* ── Layout ───────────────────────────────────────────────── */
+.page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* ── Top story ────────────────────────────────────────────── */
+.top-story {
+    border-bottom: 2px solid var(--line);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+.top-story-item { text-align: center; }
+.top-story-img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: .6rem;
+}
+.top-story-title {
+    font-size: 26px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+/* ── Columns ──────────────────────────────────────────────── */
+.columns {
+    column-count: 3;
+    column-gap: 1.6rem;
+}
+.column {
+    break-inside: avoid;
+    margin-bottom: 1.4rem;
+}
+.column-title {
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-bottom: 2px solid var(--line);
+    padding-bottom: .25rem;
+    margin-bottom: .6rem;
+}
+.headlines { list-style: none; }
+.headlines li { margin-bottom: .6rem; }
+.headlines a {
+    font-size: 13.5px;
+    line-height: 1.35;
+    color: var(--ink);
+}
+.headlines a:hover { text-decoration: underline; }
+.flag-red a { color: var(--red); font-weight: bold; }
+.flag-green a { color: var(--green); }
+
+/* ── Footer ───────────────────────────────────────────────── */
+.footer {
+    text-align: center;
+    padding: 1.5rem 1rem 2.5rem;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    margin-top: 1rem;
+}
+.footer a { color: var(--muted); }
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 720px) {
+    .columns { column-count: 1; }
+    .masthead-title { font-size: 30px; }
+    .top-story-title { font-size: 20px; }
+}

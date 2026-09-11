@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load wagtailimages_tags %}
+
+{% block content %}
+{% if top_stories %}
+<section class="top-story">
+    {% for story in top_stories %}
+    <article class="top-story-item">
+        {% if story.image %}
+            {% image story.image width-700 as img %}
+            <a href="{{ story.url }}" target="_blank" rel="noopener"><img class="top-story-img" src="{{ img.url }}" alt="{{ story.title }}"></a>
+        {% endif %}
+        <h1 class="top-story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h1>
+    </article>
+    {% endfor %}
+</section>
+{% endif %}
+
+<section class="columns">
+    {% for section in sections %}
+    <div class="column">
+        <h2 class="column-title">{{ section.name }}</h2>
+        <ul class="headlines">
+            {% for h in section.headlines.all %}
+            <li class="{% if h.flag %}flag-{{ h.flag }}{% endif %}">
+                <a href="{{ h.url }}" target="_blank" rel="noopener">{{ h.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}

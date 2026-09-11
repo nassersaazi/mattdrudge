@@ -1,0 +1,15 @@
+[Unit]
+Description=Manyabino Report (Wagtail) app server
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/root/VPS/drudge
+Environment="DJANGO_SETTINGS_MODULE=drudge.settings.production"
+ExecStart=/root/VPS/drudge/.venv/bin/gunicorn drudge.wsgi:application --bind 127.0.0.1:8001 --workers 2 --threads 2 --timeout 60 --access-logfile /var/log/drudge-access.log --error-logfile /var/log/drudge-error.log
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
