@@ -1,33 +1,38 @@
 {% extends "base.html" %}
-{% load wagtailimages_tags %}
+{% load wagtailcore_tags wagtailimages_tags %}
 
 {% block content %}
-{% if top_stories %}
-<section class="top-story">
-    {% for story in top_stories %}
-    <article class="top-story-item">
-        {% if story.image %}
-            {% image story.image width-700 as img %}
-            <a href="{{ story.url }}" target="_blank" rel="noopener"><img class="top-story-img" src="{{ img.url }}" alt="{{ story.title }}"></a>
-        {% endif %}
-        <h1 class="top-story-title"><a href="{{ story.url }}" target="_blank" rel="noopener">{{ story.title }}</a></h1>
-    </article>
+{% wagtail_site as site %}
+{% with main=top_stories.0 %}
+
+{# Above the fold: every top story except the first, small and left-aligned. #}
+<section class="above-fold">
+    {% for h in top_stories|slice:"1:" %}
+        {% include "links/headline.html" with img_spec="width-300" %}
     {% endfor %}
 </section>
+
+{% if main %}
+<section class="splash">
+    {% if main.image %}
+        {% image main.image width-600 as img %}
+        <a href="{{ main.url }}" target="_blank" rel="noopener"><img src="{{ img.url }}" alt=""></a>
+    {% endif %}
+    <h1 class="{% if main.flag %}flag-{{ main.flag }}{% endif %}"><a href="{{ main.url }}" target="_blank" rel="noopener">{{ main.title }}</a></h1>
+</section>
 {% endif %}
+{% endwith %}
+
+<a href="/" class="masthead">{{ site.site_name }}</a>
 
 <section class="columns">
-    {% for section in sections %}
-    <div class="column">
-        <h2 class="column-title">{{ section.name }}</h2>
-        <ul class="headlines">
-            {% for h in section.headlines.all %}
-            <li class="{% if h.flag %}flag-{{ h.flag }}{% endif %}">
-                <a href="{{ h.url }}" target="_blank" rel="noopener">{{ h.title }}</a>
-            </li>
-            {% endfor %}
-        </ul>
+    {% for section in sections %}{% with hs=section.headlines.all %}{% if hs %}
+    <div class="group">
+        {% for h in hs %}
+            {% include "links/headline.html" with img_spec="width-200" %}
+        {% endfor %}
+        <hr>
     </div>
-    {% endfor %}
+    {% endif %}{% endwith %}{% endfor %}
 </section>
 {% endblock %}

@@ -86,11 +86,8 @@ for section_name, title, url, flag in sample:
         flag=flag,
     )
 
-# Mark the first TOP STORIES headline as the featured top story.
-top = Headline.objects.filter(section__name="TOP STORIES").order_by("id").first()
-if top:
-    top.is_top_story = True
-    top.save()
+# TOP STORIES go above the fold; the first one becomes the big splash headline.
+Headline.objects.filter(section__name="TOP STORIES").update(is_top_story=True)
 
 print(f"Seeded {Headline.objects.count()} headlines")
 print("Done.")

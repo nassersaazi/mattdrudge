@@ -104,7 +104,7 @@ class HomePage(Page):
         sections = Section.objects.prefetch_related(
             Prefetch(
                 "headlines",
-                queryset=Headline.objects.order_by("sort_order", "id"),
+                queryset=Headline.objects.filter(is_top_story=False).order_by("sort_order", "id"),
             )
         ).all()
         context["sections"] = sections

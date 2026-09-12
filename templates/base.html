@@ -14,25 +14,16 @@
 <body class="{% block body_class %}{% endblock %}">
     {% wagtailuserbar %}
 
-    {% wagtail_site as site %}
-    <header class="masthead">
-        <div class="masthead-top">
-            <span class="date">{% now "l, F j, Y" %}</span>
-            <span class="clock" id="clock">--:--:--</span>
-        </div>
-        <a href="/" class="masthead-title">{{ site.site_name }}</a>
-        <div class="masthead-rule"></div>
-    </header>
-
     <main class="page">
         {% block content %}{% endblock %}
     </main>
 
+    {% wagtail_site as site %}
     <footer class="footer">
-        <p>{{ site.site_name }} — aggregated headlines &middot; <a href="/admin/">Admin</a></p>
+        <hr>
+        {{ site.site_name }} &middot; <a href="/admin/">Admin</a>
     </footer>
 
-    <script src="{% static 'js/clock.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
