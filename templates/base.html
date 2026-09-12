@@ -8,6 +8,7 @@
         {% block title_suffix %}{% wagtail_site as site %}{% if site and site.site_name and site.site_name != page.title %} — {{ site.site_name }}{% endif %}{% endblock %}
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="135">
     <link rel="stylesheet" href="{% static 'css/drudge.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
