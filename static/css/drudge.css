@@ -45,19 +45,23 @@ hr { border: 0; border-top: 1px solid #999; margin: .6em 0; }
     text-shadow: 3px 3px 3px #aaa;
 }
 
-/* ponytail: CSS columns, not a table; groups flow to balance, no per-column pinning. */
+/* Three pinned columns (Section.column) split by thin black rules */
 .columns {
-    column-count: 3;
-    column-gap: 20px;
-    column-rule: 1px solid #000;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     margin-top: 1em;
 }
-.group { break-inside: avoid; }
+.column { min-width: 0; padding: 0 10px; }
+.column:first-child { padding-left: 0; }
+.column:last-child { padding-right: 0; }
+.column + .column { border-left: 1px solid #000; }
 
 .footer { text-align: center; padding: 0 10px 2em; }
 
 @media (max-width: 720px) {
-    .columns { column-count: 1; }
+    .columns { grid-template-columns: 1fr; }
+    .column { padding: 0; }
+    .column + .column { border-left: 0; }
     .splash h1 { font-size: 30px; }
     .masthead { font-size: 48px; }
 }

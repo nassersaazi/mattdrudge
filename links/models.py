@@ -10,15 +10,19 @@ from wagtail.snippets.models import register_snippet
 
 @register_snippet
 class Section(models.Model):
-    """A column/topic header shown above a group of headlines."""
+    """A group of headlines, pinned to one of the three front-page columns."""
+
+    COLUMN_CHOICES = [(1, "Left"), (2, "Middle"), (3, "Right")]
 
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=120, unique=True, blank=True)
     sort_order = models.PositiveIntegerField(default=0)
+    column = models.PositiveSmallIntegerField(choices=COLUMN_CHOICES, default=1)
 
     panels = [
         FieldPanel("name"),
         FieldPanel("slug"),
+        FieldPanel("column"),
         FieldPanel("sort_order"),
     ]
 
@@ -101,16 +105,19 @@ class HomePage(Page):
 
     def get_context(self, request):
         context = super().get_context(request)
-        sections = Section.objects.prefetch_related(
-            Prefetch(
-                "headlines",
-                queryset=Headline.objects.filter(is_top_story=False).order_by("sort_order", "id"),
-            )
-        ).all()
-        context["sections"] = sections
-        context["top_stories"] = Headline.objects.filter(
-            is_top_story=True
+        headlines = Headline.objects.select_related("image").prefetch_related(
+            "image__renditions"
         ).order_by("sort_order", "id")
+        sections = list(
+            Section.objects.prefetch_related(
+                Prefetch("headlines", queryset=headlines.filter(is_top_story=False))
+            )
+        )
+        context["columns"] = [
+            [s for s in sections if s.column == col]
+            for col, _ in Section.COLUMN_CHOICES
+        ]
+        context["top_stories"] = list(headlines.filter(is_top_story=True))
         return context
 
     class Meta:

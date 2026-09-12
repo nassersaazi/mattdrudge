@@ -43,22 +43,19 @@ print(f"Site: {site.site_name}")
 
 # 4. Sections (columns).
 section_specs = [
-    ("TOP STORIES", 0),
-    ("WORLD", 1),
-    ("POLITICS", 2),
-    ("BUSINESS", 3),
-    ("TECH", 4),
-    ("SCIENCE & HEALTH", 5),
+    # (name, sort_order, column)
+    ("TOP STORIES", 0, 1),
+    ("WORLD", 1, 1),
+    ("POLITICS", 2, 2),
+    ("BUSINESS", 3, 3),
+    ("TECH", 4, 2),
+    ("SCIENCE & HEALTH", 5, 3),
 ]
 sections = {}
-for name, order in section_specs:
-    obj, created = Section.objects.get_or_create(
-        name=name, defaults={"sort_order": order}
+for name, order, column in section_specs:
+    sections[name], _ = Section.objects.update_or_create(
+        name=name, defaults={"sort_order": order, "column": column}
     )
-    if not created:
-        obj.sort_order = order
-        obj.save()
-    sections[name] = obj
 
 # 5. Sample headlines: (section, title, url, flag).
 sample = [

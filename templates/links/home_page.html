@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
 
+{% block title %}{% wagtail_site as site %}{{ site.site_name }}{% endblock %}
+{% block title_suffix %}{% endblock %}
+
 {% block content %}
 {% wagtail_site as site %}
 {% with main=top_stories.0 %}
@@ -26,13 +29,17 @@
 <a href="/" class="masthead">{{ site.site_name }}</a>
 
 <section class="columns">
-    {% for section in sections %}{% with hs=section.headlines.all %}{% if hs %}
-    <div class="group">
-        {% for h in hs %}
-            {% include "links/headline.html" %}
-        {% endfor %}
-        <hr>
+    {% for column in columns %}
+    <div class="column">
+        {% for section in column %}{% with hs=section.headlines.all %}{% if hs %}
+        <div class="group">
+            {% for h in hs %}
+                {% include "links/headline.html" %}
+            {% endfor %}
+            <hr>
+        </div>
+        {% endif %}{% endwith %}{% endfor %}
     </div>
-    {% endif %}{% endwith %}{% endfor %}
+    {% endfor %}
 </section>
 {% endblock %}
