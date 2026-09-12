@@ -1,0 +1,8 @@
+[project]
+name = "drudge"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "gunicorn==23.0.0",
+    "wagtail==7.4.2",
+]
