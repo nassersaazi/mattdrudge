@@ -3,6 +3,7 @@
 Run with:
     python manage.py shell -c "exec(open('seed.py').read())"
 """
+import urllib.request
 from io import BytesIO
 
 from django.core.files.images import ImageFile
@@ -45,12 +46,13 @@ print(f"Site: {site.site_name}")
 section_specs = [
     # (name, sort_order, column)
     ("TOP STORIES", 0, 1),
-    ("WORLD", 1, 1),
-    ("POLITICS", 2, 2),
-    ("BUSINESS", 3, 3),
-    ("TECH", 4, 2),
-    ("SCIENCE & HEALTH", 5, 3),
+    ("NATIONAL", 1, 1),
+    ("SOCIETY", 2, 1),
+    ("POLITICS", 3, 2),
+    ("SPORTS", 4, 2),
+    ("BUSINESS", 5, 3),
 ]
+Section.objects.exclude(name__in=[s[0] for s in section_specs]).delete()
 sections = {}
 for name, order, column in section_specs:
     sections[name], _ = Section.objects.update_or_create(
@@ -58,25 +60,26 @@ for name, order, column in section_specs:
     )
 
 # 5. Sample headlines: (section, title, url, flag).
+# Uganda-only: real headlines from Ugandan outlets' RSS feeds, 12 Sep 2026.
 sample = [
-    ("TOP STORIES", "Markets steady as investors weigh rate outlook", "https://www.reuters.com/markets/", ""),
-    ("TOP STORIES", "Diplomats push for new ceasefire talks", "https://apnews.com/world-news", "red"),
-    ("TOP STORIES", "Storm system gains strength in the Atlantic", "https://www.bbc.com/news/world", ""),
-    ("WORLD", "Election monitors report high turnout", "https://www.bbc.com/news/world", ""),
-    ("WORLD", "Historic summit opens in Geneva", "https://www.aljazeera.com/", ""),
-    ("WORLD", "Aid convoy reaches besieged region", "https://www.reuters.com/world/", "green"),
-    ("POLITICS", "Lawmakers clash over spending bill", "https://www.reuters.com/world/us/", ""),
-    ("POLITICS", "New poll shows tight race heading into autumn", "https://www.politico.com/", "red"),
-    ("POLITICS", "Senate schedules vote on key nomination", "https://www.bbc.com/news/world/us_and_canada", ""),
-    ("BUSINESS", "Oil prices slip on supply outlook", "https://www.reuters.com/business/energy/", ""),
-    ("BUSINESS", "Big tech earnings beat expectations", "https://www.cnbc.com/tech/", ""),
-    ("BUSINESS", "Central bank signals patient approach", "https://www.reuters.com/markets/rates-bonds/", ""),
-    ("TECH", "Chipmaker unveils next-generation processor", "https://www.theverge.com/", ""),
-    ("TECH", "AI startup raises record funding round", "https://techcrunch.com/", "red"),
-    ("TECH", "Regulators open inquiry into app store", "https://www.reuters.com/technology/", ""),
-    ("SCIENCE & HEALTH", "Study links diet to lower disease risk", "https://www.nih.gov/news-events", ""),
-    ("SCIENCE & HEALTH", "New telescope captures distant galaxy", "https://www.nasa.gov/", ""),
-    ("SCIENCE & HEALTH", "Vaccine trial shows promising results", "https://www.who.int/news", "green"),
+    ("TOP STORIES", "King Oyo buried as Omusuuga reaffirms new monarch", "https://observer.ug/news/king-oyo-buried-as-omusuuga-reaffirms-new-monarch/", ""),
+    ("TOP STORIES", "Museveni calls for peaceful resolution of Tooro succession dispute", "https://www.monitor.co.ug/uganda/news/national/museveni-calls-for-peaceful-resolution-of-tooro-succession-dispute-5593202", "red"),
+    ("TOP STORIES", "Uganda's first oil delayed yet again, new target pushed to June 2027", "https://observer.ug/business/ugandas-first-oil-delayed-yet-again-new-target-pushed-to-june-2027/", ""),
+    ("NATIONAL", "Museveni orders review of plan to turn Kampala City Square into hotel", "https://observer.ug/news/museveni-orders-review-of-plan-to-turn-kampala-city-square-into-hotel/", ""),
+    ("NATIONAL", "Northern Bypass has nine of Kampala's 10 major crash hotspots", "https://www.independent.co.ug/northern-bypass-has-nine-of-kampalas-10-major-crash-hotspots/", ""),
+    ("NATIONAL", "'God has remembered us': Gomba celebrates lifeline rain after five-month dry spell", "https://nilepost.co.ug/news/370464/god-has-remembered-us-gomba-celebrates-lifeline-rain-after-five-month-dry-spell", "green"),
+    ("SOCIETY", "Ageing Soroti Hospital needs urgent replacement", "https://www.independent.co.ug/ageing-soroti-hospital-needs-urgent-replacement/", ""),
+    ("SOCIETY", "EXPERTS: Uganda's education export boom built without a strategy", "https://www.independent.co.ug/experts-ugandas-education-export-boom-built-without-a-strategy/", ""),
+    ("SOCIETY", "Uganda ranks fifth globally for entry openness as passport mobility score stands at 70", "https://www.watchdoguganda.com/news/20260912/197967/uganda-ranks-fifth-globally-for-entry-openness-as-passport-mobility-score-stands-at-70.html", ""),
+    ("POLITICS", "346 election petitions set for marathon hearing", "https://www.monitor.co.ug/uganda/news/national/346-election-petitions-set-for-marathon-hearing-5593080", ""),
+    ("POLITICS", "Ssenyonyi warns against giving away City Square, recalls controversial land deals", "https://pmldaily.com/news/2026/09/ssenyonyi-warns-against-giving-away-city-square-recalls-controversial-land-deals.html", "red"),
+    ("POLITICS", "Journalists walk out on police over blockade at Tooro palace", "https://observer.ug/news/journalists-walk-out-on-police-over-blockade-at-tooro-palace/", ""),
+    ("SPORTS", "Kitara eliminate Mogadishu City Council to book Al Ahly at next stage", "https://kawowo.com/2026/09/12/kitara-eliminate-mogadishu-city-council-to-book-al-ahly-at-next-stage-caf-confederation-cup/", "green"),
+    ("SPORTS", "Kenya inflicts first defeat on Cricket Cranes at ILT20 Cup", "https://kawowo.com/2026/09/12/kenya-inflicts-first-defeat-on-cricket-cranes-at-ilt20-cup/", ""),
+    ("SPORTS", "Masaza Cup Quarter-Finals Kick Off as Eight Counties Chase Semi-Final Berths", "https://nilepost.co.ug/sports/370430/masaza-cup-quarter-finals-kick-off-as-eight-counties-chase-semi-final-berths", ""),
+    ("BUSINESS", "Entebbe airport passenger traffic rises in August", "https://nilepost.co.ug/news/370460/entebbe-airport-passenger-traffic-rises-in-august", ""),
+    ("BUSINESS", "Ugandan farmers count heavy losses as drought withers crops, weakens livestock", "https://www.independent.co.ug/ugandan-farmers-count-heavy-losses-as-drought-withers-crops-weakens-livestock/", ""),
+    ("BUSINESS", "Busoga eyes coffee, cocoa tourism to create jobs", "https://www.monitor.co.ug/uganda/news/national/busoga-eyes-coffee-cocoa-tourism-to-create-jobs-5592852", ""),
 ]
 
 Headline.objects.all().delete()
@@ -91,11 +94,25 @@ for section_name, title, url, flag in sample:
 # TOP STORIES go above the fold; the first one becomes the big splash headline.
 Headline.objects.filter(section__name="TOP STORIES").update(is_top_story=True)
 
-# Grey placeholder images on the first headline of each section (first two of TOP STORIES).
 Image.objects.filter(title__startswith="seed-").delete()
+
+# Real photo for the splash headline (first TOP STORIES headline).
+splash = sections["TOP STORIES"].headlines.order_by("id").first()
+req = urllib.request.Request(
+    "https://i0.wp.com/observer.ug/wp-content/uploads/2026/09/King-Oyos-casket.jpg?resize=780%2C613&ssl=1",
+    headers={"User-Agent": "Mozilla/5.0"},
+)
+with urllib.request.urlopen(req, timeout=30) as resp:
+    splash.image = Image.objects.create(
+        title="seed-king-oyo-casket",
+        file=ImageFile(BytesIO(resp.read()), name="seed-king-oyo-casket.jpg"),
+    )
+splash.save()
+
+# Grey placeholders on the first headline of each other section, and the second top story.
 for section in sections.values():
-    count = 2 if section.name == "TOP STORIES" else 1
-    for h in section.headlines.order_by("id")[:count]:
+    qs = section.headlines.order_by("id")
+    for h in qs[1:2] if section.name == "TOP STORIES" else qs[:1]:
         buf = BytesIO()
         PILImage.new("RGB", (400, 400), (90 + h.pk * 13 % 120,) * 3).save(buf, "PNG")
         h.image = Image.objects.create(
