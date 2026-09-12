@@ -3,6 +3,11 @@
 Run with:
     python manage.py shell -c "exec(open('seed.py').read())"
 """
+from io import BytesIO
+
+from django.core.files.images import ImageFile
+from PIL import Image as PILImage
+from wagtail.images.models import Image
 from wagtail.models import Page, Site
 
 from links.models import Headline, HomePage, Section
@@ -88,6 +93,18 @@ for section_name, title, url, flag in sample:
 
 # TOP STORIES go above the fold; the first one becomes the big splash headline.
 Headline.objects.filter(section__name="TOP STORIES").update(is_top_story=True)
+
+# Grey placeholder images on the first headline of each section (first two of TOP STORIES).
+Image.objects.filter(title__startswith="seed-").delete()
+for section in sections.values():
+    count = 2 if section.name == "TOP STORIES" else 1
+    for h in section.headlines.order_by("id")[:count]:
+        buf = BytesIO()
+        PILImage.new("RGB", (400, 400), (90 + h.pk * 13 % 120,) * 3).save(buf, "PNG")
+        h.image = Image.objects.create(
+            title=f"seed-{h.pk}", file=ImageFile(buf, name=f"seed-{h.pk}.png")
+        )
+        h.save()
 
 print(f"Seeded {Headline.objects.count()} headlines")
 print("Done.")
