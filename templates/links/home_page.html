@@ -8,7 +8,7 @@
 {# Above the fold: every top story except the first, small and left-aligned. #}
 <section class="above-fold">
     {% for h in top_stories|slice:"1:" %}
-        {% include "links/headline.html" with img_spec="width-300" %}
+        {% include "links/headline.html" %}
     {% endfor %}
 </section>
 
@@ -29,7 +29,7 @@
     {% for section in sections %}{% with hs=section.headlines.all %}{% if hs %}
     <div class="group">
         {% for h in hs %}
-            {% include "links/headline.html" with img_spec="width-200" %}
+            {% include "links/headline.html" %}
         {% endfor %}
         <hr>
     </div>
