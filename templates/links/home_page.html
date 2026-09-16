@@ -5,39 +5,55 @@
 {% block title_suffix %}{% endblock %}
 
 {% block content %}
-{% wagtail_site as site %}
 {% with main=top_stories.0 %}
+<section class="hero">
+    {# Left: every top story except the first. #}
+    <div class="hero-side">
+        {% for h in top_stories|slice:"1:" %}
+            {% include "links/card.html" %}
+        {% endfor %}
+    </div>
 
-{# Above the fold: every top story except the first, small and left-aligned. #}
-<section class="above-fold">
-    {% for h in top_stories|slice:"1:" %}
-        {% include "links/headline.html" %}
-    {% endfor %}
-</section>
+    <div class="splash">
+        {% if main %}
+            {% if main.image %}
+                {% image main.image fill-1200x800 as img %}
+                <a href="{{ main.link }}"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}" alt=""></a>
+            {% endif %}
+            {% with h=main %}{% include "links/kicker.html" %}{% endwith %}
+            <h2 class="splash-title"><a href="{{ main.link }}">{{ main.title }}</a></h2>
+            <p class="byline">{{ main.source }}</p>
+        {% endif %}
+    </div>
 
-{% if main %}
-<section class="splash">
-    {% if main.image %}
-        {% image main.image width-600 as img %}
-        <a href="{{ main.url }}" target="_blank" rel="noopener"><img src="{{ img.url }}" alt=""></a>
-    {% endif %}
-    <h1 class="{% if main.flag %}flag-{{ main.flag }}{% endif %}"><a href="{{ main.url }}" target="_blank" rel="noopener">{{ main.title }}</a></h1>
+    <aside class="rail">
+        {% for h in latest %}
+        <article class="rail-item">
+            <div>
+                {% include "links/kicker.html" %}
+                <h3 class="rail-title"><a href="{{ h.link }}">{{ h.title }}</a></h3>
+                <p class="byline">{{ h.source }}</p>
+            </div>
+            {% if h.image %}
+                {% image h.image fill-160x160 as img %}
+                <a href="{{ h.link }}"><img src="{{ img.url }}" width="80" height="80" alt=""></a>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </aside>
 </section>
-{% endif %}
 {% endwith %}
 
-<a href="/" class="masthead">{{ site.site_name }}</a>
-
-<section class="columns">
+<section class="band">
     {% for column in columns %}
-    <div class="column">
+    <div class="band-col">
         {% for section in column %}{% with hs=section.headlines.all %}{% if hs %}
-        <div class="group">
+        <section class="block" id="{{ section.slug }}">
+            <h2 class="block-title">{{ section.name }}</h2>
             {% for h in hs %}
-                {% include "links/headline.html" %}
+                {% include "links/card.html" %}
             {% endfor %}
-            <hr>
-        </div>
+        </section>
         {% endif %}{% endwith %}{% endfor %}
     </div>
     {% endfor %}

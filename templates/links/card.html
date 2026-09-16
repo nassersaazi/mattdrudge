@@ -1,0 +1,12 @@
+{% load wagtailimages_tags %}
+<article class="card{% if h.image %} has-img{% endif %}">
+    {% if h.image %}
+        {% image h.image fill-600x400 as img %}
+        <a class="card-img" href="{{ h.link }}"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}" alt="" loading="lazy"></a>
+    {% endif %}
+    <div class="card-body">
+        {% include "links/kicker.html" %}
+        <h3 class="card-title"><a href="{{ h.link }}">{{ h.title }}</a></h3>
+        <p class="byline">{{ h.source }}</p>
+    </div>
+</article>

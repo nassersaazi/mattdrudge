@@ -8,21 +8,37 @@
         {% block title_suffix %}{% wagtail_site as site %}{% if site and site.site_name and site.site_name != page.title %} — {{ site.site_name }}{% endif %}{% endblock %}
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="refresh" content="135">
-    <link rel="stylesheet" href="{% static 'css/drudge.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
     {% wagtailuserbar %}
+    {% wagtail_site as site %}
 
-    <main class="page">
+    <header>
+        <div class="topbar">
+            <div class="wrap">
+                <nav class="nav">
+                    {% for section in sections %}{% if section.headlines.all %}<a href="/#{{ section.slug }}">{{ section.name|title }}</a>{% endif %}{% endfor %}
+                </nav>
+                <span class="date">{% now "l, F j, Y" %}</span>
+            </div>
+        </div>
+        <h1 class="masthead"><a href="/">{{ site.site_name }}</a></h1>
+    </header>
+
+    <main class="wrap">
         {% block content %}{% endblock %}
     </main>
 
-    {% wagtail_site as site %}
     <footer class="footer">
-        <hr>
-        {{ site.site_name }} &middot; <a href="/admin/">Admin</a>
+        <div class="wrap">
+            <span>{{ site.site_name }}</span>
+            <a href="/admin/">Admin</a>
+        </div>
     </footer>
 
     {% block extra_js %}{% endblock %}

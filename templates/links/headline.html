@@ -1,5 +1,0 @@
-{% load wagtailimages_tags %}
-<p class="headline{% if h.flag %} flag-{{ h.flag }}{% endif %}">
-    {% if h.image %}{% image h.image width-400 as img %}<a href="{{ h.url }}" target="_blank" rel="noopener"><img src="{{ img.url }}" alt=""></a><br>{% endif %}
-    <a href="{{ h.url }}" target="_blank" rel="noopener">{{ h.title }}</a>
-</p>

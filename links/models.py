@@ -1,11 +1,28 @@
+from urllib.parse import urlparse
+
 from django.db import models
 from django.db.models import Prefetch
+from django.urls import reverse
 from django.utils.text import slugify
 
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.fields import RichTextField
 from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtail.snippets.models import register_snippet
+
+# Display names for known outlets; anything else shows its hostname.
+OUTLETS = {
+    "bigeye.ug": "Bigeye",
+    "galaxyfm.co.ug": "Galaxy FM",
+    "independent.co.ug": "The Independent",
+    "mbu.ug": "MBU",
+    "nilepost.co.ug": "Nile Post",
+    "observer.ug": "The Observer",
+    "pmldaily.com": "PML Daily",
+    "softpower.ug": "SoftPower",
+    "watchdoguganda.com": "Watchdog Uganda",
+}
 
 
 @register_snippet
@@ -42,7 +59,7 @@ class Section(models.Model):
 
 @register_snippet
 class Headline(models.Model):
-    """A single external link headline."""
+    """A headline linking to its story page, or straight to the source if it has no body."""
 
     FLAG_CHOICES = [
         ("", "None"),
@@ -51,7 +68,7 @@ class Headline(models.Model):
     ]
 
     title = models.CharField(max_length=300)
-    url = models.URLField(max_length=1000)
+    url = models.URLField(max_length=1000, help_text="Original article on the source outlet.")
     section = models.ForeignKey(
         Section, related_name="headlines", on_delete=models.CASCADE
     )
@@ -69,6 +86,9 @@ class Headline(models.Model):
     flag = models.CharField(
         max_length=10, blank=True, choices=FLAG_CHOICES, default=""
     )
+    body = RichTextField(
+        blank=True, help_text="Story text. Leave empty to link straight to the source."
+    )
 
     panels = [
         MultiFieldPanel(
@@ -82,7 +102,8 @@ class Headline(models.Model):
                 FieldPanel("flag"),
             ],
             heading="Headline",
-        )
+        ),
+        FieldPanel("body"),
     ]
 
     class Meta:
@@ -93,9 +114,18 @@ class Headline(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def source(self):
+        host = urlparse(self.url).netloc.lower().removeprefix("www.")
+        return OUTLETS.get(host, host)
+
+    @property
+    def link(self):
+        return reverse("story", args=[self.pk]) if self.body else self.url
+
 
 class HomePage(Page):
-    """The Drudge-style front page."""
+    """The front page."""
 
     max_count = 1
 
@@ -117,8 +147,13 @@ class HomePage(Page):
             [s for s in sections if s.column == col]
             for col, _ in Section.COLUMN_CHOICES
         ]
+        context["sections"] = sections
         context["top_stories"] = list(headlines.filter(is_top_story=True))
+        context["latest"] = list(
+            headlines.filter(is_top_story=False).order_by("-id")[:4]
+        )
         return context
 
     class Meta:
         verbose_name = "Home"
+

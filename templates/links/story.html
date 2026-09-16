@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ h.title }}{% endblock %}
+{% block title_suffix %}{% wagtail_site as site %} — {{ site.site_name }}{% endblock %}
+
+{% block content %}
+<article class="story">
+    <header class="story-head">
+        <p class="kicker">{% if h.flag == "red" %}Breaking{% elif h.flag == "green" %}Good news{% else %}{{ h.section.name }}{% endif %}</p>
+        <h2 class="story-title">{{ h.title }}</h2>
+        <p class="byline">Originally reported by <a href="{{ h.url }}">{{ h.source }}</a></p>
+    </header>
+
+    {% if h.image %}
+        {% image h.image width-1400 as img %}
+        <figure class="story-img"><img src="{{ img.url }}" width="{{ img.width }}" height="{{ img.height }}" alt=""></figure>
+    {% endif %}
+
+    <div class="prose">{{ h.body|richtext }}</div>
+
+    <p class="story-source byline">Read the original at <a href="{{ h.url }}">{{ h.source }}</a></p>
+</article>
+{% endblock %}

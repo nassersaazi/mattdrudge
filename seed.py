@@ -1,4 +1,4 @@
-"""Seed the Manyabino Report aggregator with sections + sample headlines.
+"""Seed the munnakampala aggregator with sections, sample headlines and story pages.
 
 Run with:
     python manage.py shell -c "exec(open('seed.py').read())"
@@ -7,6 +7,7 @@ import urllib.request
 from io import BytesIO
 
 from django.core.files.images import ImageFile
+from django.utils.lorem_ipsum import paragraphs
 from PIL import Image as PILImage
 from wagtail.images.models import Image
 from wagtail.models import Page, Site
@@ -14,7 +15,7 @@ from wagtail.models import Page, Site
 from links.models import Headline, HomePage, Section
 
 # 1. Remove Wagtail's default "Welcome" page (slug 'home') and its Site.
-welcome = Page.objects.filter(slug="home", depth=2).first()
+welcome = Page.objects.filter(slug="home", depth=2).not_type(HomePage).first()
 if welcome is not None:
     welcome.delete()  # cascades to the default Site
     print("Removed default welcome page")
@@ -38,7 +39,7 @@ if site is None:
     )
 else:
     site.root_page = home
-site.site_name = "gampe"
+site.site_name = "munnakampala"
 site.save()
 print(f"Site: {site.site_name}")
 
@@ -89,6 +90,7 @@ for section_name, title, url, flag in sample:
         url=url,
         section=sections[section_name],
         flag=flag,
+        body="".join(f"<p>{p}</p>" for p in paragraphs(6, common=False)),
     )
 
 # TOP STORIES go above the fold; the first one becomes the big splash headline.
