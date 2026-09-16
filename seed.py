@@ -1,4 +1,4 @@
-"""Seed the munnakampala aggregator with sections, sample headlines and story pages.
+"""Seed the Munnakampala aggregator with sections, sample headlines and story pages.
 
 Run with:
     python manage.py shell -c "exec(open('seed.py').read())"
@@ -39,7 +39,7 @@ if site is None:
     )
 else:
     site.root_page = home
-site.site_name = "munnakampala"
+site.site_name = "Munnakampala"
 site.save()
 print(f"Site: {site.site_name}")
 

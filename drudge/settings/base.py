@@ -98,7 +98,7 @@ STORAGES = {
     },
 }
 
-WAGTAIL_SITE_NAME = "munnakampala"
+WAGTAIL_SITE_NAME = "Munnakampala"
 
 WAGTAILSEARCH_BACKENDS = {
     "default": {

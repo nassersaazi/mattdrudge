@@ -1,5 +1,5 @@
 [Unit]
-Description=munnakampala (Wagtail) app server
+Description=Munnakampala (Wagtail) app server
 After=network.target
 
 [Service]

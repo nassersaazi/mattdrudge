@@ -9,7 +9,7 @@ class HomePageTest(TestCase):
         home = Page.get_first_root_node().add_child(
             instance=HomePage(title="Home", slug="front")
         )
-        Site.objects.update(root_page=home, site_name="munnakampala")
+        Site.objects.update(root_page=home, site_name="Munnakampala")
 
         left = Section.objects.create(name="Left", column=1)
         Section.objects.create(name="Empty", column=2)
@@ -20,7 +20,7 @@ class HomePageTest(TestCase):
 
         html = self.client.get("/").content.decode()
 
-        self.assertRegex(html, r"<title>\s*munnakampala\s*</title>")
+        self.assertRegex(html, r"<title>\s*Munnakampala\s*</title>")
         # Top stories render once each: not in the latest rail or the section band.
         self.assertEqual(html.count("Splash-headline"), 1)
         self.assertEqual(html.count("Side-headline"), 1)
@@ -35,12 +35,14 @@ class HomePageTest(TestCase):
         # Bylines: known outlets get a display name, others fall back to the hostname.
         self.assertIn("The Observer", html)
         self.assertIn("example.test", html)
+        # Footer: section links.
+        self.assertIn('href="/#right"', html)
 
     def test_story_page(self):
         home = Page.get_first_root_node().add_child(
             instance=HomePage(title="Home", slug="front")
         )
-        Site.objects.update(root_page=home, site_name="munnakampala")
+        Site.objects.update(root_page=home, site_name="Munnakampala")
         section = Section.objects.create(name="News")
         story = Headline.objects.create(title="Story-headline", url="https://observer.ug/x", section=section, body="<p>Lorem ipsum</p>")
         external = Headline.objects.create(title="Link-headline", url="https://observer.ug/y", section=section)
@@ -51,7 +53,7 @@ class HomePageTest(TestCase):
         self.assertIn('href="https://observer.ug/y"', home_html)
 
         html = self.client.get(f"/story/{story.pk}/").content.decode()
-        self.assertRegex(html, r"<title>\s*Story-headline\s*— munnakampala\s*</title>")
+        self.assertRegex(html, r"<title>\s*Story-headline\s*— Munnakampala\s*</title>")
         self.assertIn("<p>Lorem ipsum</p>", html)
         self.assertIn('href="https://observer.ug/x"', html)
         # No story page for headlines without a body, or unknown ids.

@@ -143,16 +143,30 @@ img { display: block; max-width: 100%; height: auto; }
 }
 .band-col:nth-child(3) .card-title { font-size: 17px; line-height: 1.4; }
 
-/* ── Footer ───────────────────────────────────────────────── */
+/* ── Footer: black band, white mono links ─────────────────── */
 .footer {
-    border-top: 1px solid var(--rule);
-    padding: 28px 0 48px;
-    color: var(--muted);
-    font: 500 12px/1.3 var(--mono);
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    background: #000;
+    color: #fff;
+    padding: 40px 0 56px;
+    font: 300 14px/1.4 var(--mono);
 }
-.footer .wrap { display: flex; justify-content: space-between; }
+.footer-top { display: grid; grid-template-columns: repeat(auto-fill, 224px); row-gap: 32px; }
+.footer-head { margin: 0 0 16px; font: 500 14px/1.4 var(--mono); letter-spacing: .5px; }
+.footer-list { margin: 0; padding: 0; list-style: none; }
+.footer-list li + li { margin-top: 9px; }
+.footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px 32px;
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid #fff;
+}
+.footer-legal { margin: 0; font: 400 10px/1.6 var(--mono); letter-spacing: .25px; }
+.footer-mark { font: italic 400 28px/1 var(--serif); }
+.footer-mark:hover { text-decoration: none; }
 
 /* ── Story pages ──────────────────────────────────────────── */
 .story { padding: 16px 0 80px; }

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Instrument+Serif&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
     <link rel="stylesheet" href="{% static 'css/site.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -36,8 +36,27 @@
 
     <footer class="footer">
         <div class="wrap">
-            <span>{{ site.site_name }}</span>
-            <a href="/admin/">Admin</a>
+            <div class="footer-top">
+                {% if sections %}
+                <div>
+                    <h2 class="footer-head">Sections</h2>
+                    <ul class="footer-list">
+                        {% for section in sections %}{% if section.headlines.all %}<li><a href="/#{{ section.slug }}">{{ section.name|title }}</a></li>{% endif %}{% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <div>
+                    <h2 class="footer-head">{{ site.site_name }}</h2>
+                    <ul class="footer-list">
+                        <li><a href="/">Front Page</a></li>
+                        <li><a href="/admin/">Admin</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-legal">{{ site.site_name }} &copy; {% now "Y" %}. All headlines link to their original publishers.</p>
+                <a class="footer-mark" href="/">{{ site.site_name }}</a>
+            </div>
         </div>
     </footer>
 
